@@ -266,8 +266,8 @@ async function getTracks(ext) {
 
         // 新版黄果详情页
         const html = await fetchHtml(
-            SITE + '/video/' + id + '/'
-        )
+    SITE + '/search/video/' + encodeURIComponent(kw) + '/'
+)
 
         const tracks = []
 
