@@ -131,79 +131,39 @@ function cardBlocks(slice) {
 }
 
 function parseCardBlock(block) {
-    console.log('NEW parseCardBlock RUN')
-    const idm = block.match(/href="\/video\/(\d+)\/"/)
+
+    const idm = block.match(/href="\/video\/(\d+)\//)
 
     if (!idm) {
-    console.log('FAIL ID')
-    return null
-}
-
+        console.log('NO ID')
+        return null
+    }
 
     const vid = idm[1]
 
+    const tm = block.match(
+        /hg-drama-card__title[^>]*>[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/
+    )
 
     let title = ''
 
- const tm = block.match(
-/hg-drama-card__title[^>]*>[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/
-)
-
-if (tm) {
-    title = stripTags(tm[1]).trim()
-}
-
-
-    if(!title) {
-    console.log('FAIL TITLE', block)
-    return null
-}
-
-
-
-    const img =
-        block.match(/data-src="([^"]+)"/) ||
-        block.match(/src="([^"]+)"/)
-
-
-
-    const ep =
-        block.match(/hg-drama-card__episode[^>]*>([\s\S]*?)<\/span>/)
-
-
-    const score =
-        block.match(/hg-drama-card__score[^>]*>([\s\S]*?)<\/span>/)
-
-
-
-    let remarks=''
-
-
-    if(ep)
-        remarks += stripTags(ep[1])
-
-
-    if(score)
-        remarks += remarks ? ' · '+stripTags(score[1]) : stripTags(score[1])
-
-
-
-    return {
-
-        vod_id: vid,
-
-        vod_name: title,
-
-        vod_pic: img ? img[1] : '',
-
-        vod_remarks: remarks,
-
-        ext:{
-            id:vid
-        }
-
+    if (tm) {
+        title = stripTags(tm[1])
+            .replace(/全集在线观看/g, '')
+            .trim()
     }
 
+    const imgM = block.match(/data-src="([^"]+)"/)
+
+    return {
+        vod_id: vid,
+        vod_name: title || ('影片 ' + vid),
+        vod_pic: imgM ? imgM[1] : '',
+        vod_remarks: '',
+        ext: {
+            id: vid
+        }
+    }
 }
 
 
