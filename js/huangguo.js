@@ -134,8 +134,10 @@ function parseCardBlock(block) {
 
     const idm = block.match(/href="\/video\/(\d+)\/"/)
 
-    if (!idm)
-        return null
+    if (!idm) {
+    console.log('FAIL ID')
+    return null
+}
 
 
     const vid = idm[1]
@@ -152,8 +154,8 @@ if (tm) {
 }
 
 
-    if(!title){
-    console.log('TITLE FAIL', block)
+    if(!title) {
+    console.log('FAIL TITLE', block)
     return null
 }
 
