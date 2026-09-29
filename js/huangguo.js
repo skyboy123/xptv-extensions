@@ -255,37 +255,97 @@ async function getCards(ext) {
 
 async function getTracks(ext) {
     ext = argsify(ext)
+
     const id = ext.id || ''
-    if (!id) return jsonify({ list: [] })
-    try {
-        const html = await fetchHtml(SITE + '/detail/' + id + '/')
-        const tracks = []
-        const gridM = html.match(/<div\s+class="[^"]*\bhg-web-detail__ep-grid\b[^"]*"[^>]*>([\s\S]*?)<\/div>/)
-        if (gridM) {
-            const are = /<a\b[^>]*>[\s\S]*?<\/a>/g
-            let m
-            while ((m = are.exec(gridM[1])) !== null) {
-                const tag = m[0]
-                const hrefM = tag.match(/href="([^"]+)"/)
-                if (!hrefM) continue
-                const href = hrefM[1]
-                const eidM = tag.match(/data-ep-id="([^"]*)"/)
-                const eid = eidM ? eidM[1] : ''
-                const name = eid ? '第' + eid + '集' : stripTags(tag)
-                tracks.push({ name: name, ext: { url: fix(href), ep: eid } })
-            }
-        }
-        if (!tracks.length) {
-            const playM = html.match(/<a\b[^>]*class="[^"]*\bhg-web-detail__play\b[^"]*"[^>]*href="([^"]+)"/)
-            if (playM) {
-                tracks.push({ name: '第1集', ext: { url: fix(playM[1]), ep: '' } })
-            }
-        }
-        if (!tracks.length) return jsonify({ list: [] })
-        return jsonify({ list: [{ title: '黄果短剧', tracks: tracks }] })
-    } catch (e) {
-        console.error('getTracks error:', e)
+
+    if (!id) {
         return jsonify({ list: [] })
+    }
+
+    try {
+
+        // 新版黄果详情页
+        const html = await fetchHtml(
+            SITE + '/video/' + id + '/'
+        )
+
+        const tracks = []
+
+
+        // 新版集数按钮
+        const re = /<a[^>]*class="[^"]*hg-web-play__ep[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g
+
+
+        let m
+
+        while ((m = re.exec(html)) !== null) {
+
+            const href = m[1]
+
+            const text = stripTags(m[2])
+
+            const epM = href.match(/ep-(\d+)/)
+
+            const ep = epM ? epM[1] : ''
+
+            tracks.push({
+                name: ep ? '第' + ep + '集' : text,
+                ext: {
+                    url: fix(href),
+                    ep: ep
+                }
+            })
+        }
+
+
+        // 防止正则失效，备用方案
+        if (!tracks.length) {
+
+            const eps = html.match(/ep-(\d+)/g)
+
+            if (eps) {
+
+                [...new Set(eps)].forEach(x => {
+
+                    const ep = x.replace('ep-','')
+
+                    tracks.push({
+                        name:'第'+ep+'集',
+                        ext:{
+                            url:
+                            SITE+
+                            '/video/'+id+'/ep-'+ep+'/',
+                            ep:ep
+                        }
+                    })
+
+                })
+            }
+        }
+
+
+        if (!tracks.length) {
+            return jsonify({list:[]})
+        }
+
+
+        return jsonify({
+            list:[
+                {
+                    title:'黄果短剧',
+                    tracks:tracks
+                }
+            ]
+        })
+
+
+    } catch(e) {
+
+        console.error('getTracks error:',e)
+
+        return jsonify({
+            list:[]
+        })
     }
 }
 
