@@ -535,6 +535,8 @@ async function search(ext) {
 
         const list = []
 
+        console.log('html length:', html.length)
+        console.log('card match:', html.match(/hg-drama-card/g)?.length)
         const re = /<div class="hg-drama-card">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/g
 
         let m
@@ -542,7 +544,8 @@ async function search(ext) {
         while ((m = re.exec(html)) !== null) {
 
             const item = parseCardBlock(m[0])
-
+            console.log('block:', m[0].slice(0,200))
+            console.log('item:', item)
             if(item)
                 list.push(item)
 
