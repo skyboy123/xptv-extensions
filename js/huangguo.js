@@ -535,8 +535,7 @@ async function search(ext) {
 
         const list = []
 
-        const re = /<div[^>]*class="[^"]*hg-drama-card[^"]*"[\s\S]*?<\/div>\s*<\/div>/g
-
+        const re = /<div class="hg-drama-card">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/g
 
         let m
 
