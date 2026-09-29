@@ -132,7 +132,7 @@ function cardBlocks(slice) {
 
 function parseCardBlock(block) {
 
-    const a = block.match(/href="\/video\/(\d+)\/?"/)
+    const a = block.match(/href="[^"]*\/(?:video|detail)\/(\d+)\/"/)
 
     if (!a) return null
 
