@@ -132,10 +132,7 @@ function cardBlocks(slice) {
 
 function parseCardBlock(block) {
 
-    const a =
-        block.match(/href="[^"]*\/video\/(\d+)\/?[^"]*"/)
-        ||
-        block.match(/href="[^"]*\/detail\/(\d+)\/?[^"]*"/)
+    const a = block.match(/href="\/video\/(\d+)\/?"/)
 
     if (!a) return null
 
@@ -149,16 +146,55 @@ function parseCardBlock(block) {
         block.match(/src="([^"]+)"/)
 
 
-    let title = ''
-
-
     const t =
-        block.match(/hg-drama-card__title[^>]*>([\s\S]*?)<\/a>/)
+        block.match(/hg-drama-card__title[^>]*>([\s\S]*?)<\/span>/)
 
-    if (t) {
-        title = stripTags(t[1])
+
+    const title = t ? stripTags(t[1]).trim() : ''
+
+
+    if (!title) return null
+
+
+    const ep =
+        block.match(/hg-drama-card__episode[^>]*>([\s\S]*?)<\/span>/)
+
+
+    const score =
+        block.match(/hg-drama-card__score[^>]*>([\s\S]*?)<\/span>/)
+
+
+    const rem =
+        ep ? stripTags(ep[1]).trim() : ''
+
+
+    const sc =
+        score ? stripTags(score[1]).trim() : ''
+
+
+    let remarks = ''
+
+    if (rem && sc)
+        remarks = rem + ' · ' + sc
+    else
+        remarks = rem || sc
+
+
+    return {
+
+        vod_id: vid,
+
+        vod_name: title,
+
+        vod_pic: imgSrc(imgM ? imgM[1] : ''),
+
+        vod_remarks: remarks,
+
+        ext:{
+            id: vid
+        }
     }
-
+}
 
     if (!title) {
 
