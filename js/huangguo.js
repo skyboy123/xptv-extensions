@@ -143,13 +143,13 @@ function parseCardBlock(block) {
 
     let title = ''
 
-    const tm = block.match(
-        /hg-drama-card__title[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/
-    )
+   const tm = block.match(
+/hg-drama-card__title[^>]*>[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/
+)
 
-
-    if(tm)
-        title = stripTags(tm[1])
+if (tm) {
+    title = stripTags(tm[1]).trim()
+}
 
 
     if(!title)
