@@ -152,8 +152,10 @@ if (tm) {
 }
 
 
-    if(!title)
-        return null
+    if(!title){
+    console.log('TITLE FAIL', block)
+    return null
+}
 
 
 
