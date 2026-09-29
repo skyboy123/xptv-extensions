@@ -147,11 +147,19 @@ function parseCardBlock(block) {
 
     let title = ''
 
-    if (tm) {
-        title = stripTags(tm[1])
-            .replace(/全集在线观看/g, '')
-            .trim()
-    }
+if (tm) {
+    title = tm[1]
+        .replace(/<[^>]*>/g,'')
+        .replace('全集在线观看','')
+        .trim()
+}
+
+console.log('TITLE RESULT=', title)
+
+if(!title){
+    console.log('FAIL TITLE')
+    return null
+}
 
     const imgM = block.match(/data-src="([^"]+)"/)
 
