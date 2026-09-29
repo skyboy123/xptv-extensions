@@ -471,14 +471,60 @@ async function getPlayinfo(ext) {
 }
 
 async function search(ext) {
+
     ext = argsify(ext)
+
     const kw = String(ext.text || ext.wd || '').trim()
-    if (!kw) return jsonify({ list: [], page: 1 })
+
+    if (!kw)
+        return jsonify({
+            list: [],
+            page: 1
+        })
+
+
     try {
-        const html = await fetchHtml(SITE + '/search/video/' + encodeURIComponent(kw) + '/')
-        return jsonify({ list: parseGridCards(html, false), page: 1 })
-    } catch (e) {
-        console.error('search error:', e)
-        return jsonify({ list: [], page: 1 })
+
+        const html = await fetchHtml(
+            SITE + '/search/video/' + encodeURIComponent(kw) + '/'
+        )
+
+
+        const list = []
+
+        const re = /<div[^>]*class="[^"]*hg-drama-card[^"]*"[\s\S]*?<\/div>\s*<\/div>/g
+
+
+        let m
+
+        while ((m = re.exec(html)) !== null) {
+
+            const item = parseCardBlock(m[0])
+
+            if(item)
+                list.push(item)
+
+        }
+
+
+        console.log('search cards:', list.length)
+
+
+        return jsonify({
+            list:list,
+            page:1
+        })
+
+
+    } catch(e){
+
+        console.error('search error:',e)
+
+        return jsonify({
+            list:[],
+            page:1
+        })
+
     }
+
 }
