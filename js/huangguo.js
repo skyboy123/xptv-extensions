@@ -131,7 +131,7 @@ function cardBlocks(slice) {
 }
 
 function parseCardBlock(block) {
-
+    console.log('NEW parseCardBlock RUN')
     const idm = block.match(/href="\/video\/(\d+)\/"/)
 
     if (!idm) {
